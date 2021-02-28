@@ -33,24 +33,35 @@ def find_images():
 				# We don't want to accidentally load an image multiple times, but there's a .jpg and .mat file
 				# The _0 at the end ensures that it's not one of the "rotated" images included in the dataset
 				image_fname = dataset_path + d + "/" + fname[:-4] + ".jpg"
-				data_fname = dataset_path + "/landmarks/" + d + "/" + fname[:-4] + "_pts.mat"
+				data_fname = dataset_path + "landmarks/" + d + "/" + fname[:-4] + "_pts.mat"
 				image_fnames.append(image_fname)
 				data_fnames.append(data_fname)
 
 	print("Found %d images" % len(image_fnames))
 	return image_fnames, data_fnames
 
-image_fnames, data_fnames = find_images()
+def load_data(image_fnames, data_fnames):
+	# Load the image and landmark data for each listed filename above.
+	# Note that the indices must correspond -- don't shuffle them!
+	print("Loading images...")
+	images = [matplotlib.image.imread(image_fname) for image_fname in image_fnames]
+	print("Loading landmarks...")
+	datas = [scipy.io.loadmat(data_fname) for data_fname in data_fnames]
+	landmarks_2d = [data["pts_2d"] for data in datas]
+	landmarks_3d = [data["pts_3d"] for data in datas]
+	print("Loaded %d images" % len(images))
+	return images, landmarks_2d, landmarks_3d
 
-# idx = 0
-idx = np.random.randint(len(image_fnames))
-img = matplotlib.image.imread(image_fnames[idx])
-data = scipy.io.loadmat(data_fnames[idx])
-landmarks = data["pts_2d"]
-print("Image filename: %s" % image_fnames[idx])
-print("Data filename:  %s" % data_fnames[idx])
+if __name__ == "__main__":
+	image_fnames, data_fnames = find_images()
+	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
+	idx = np.random.randint(len(images))
+	print("Displaying image: %s" % image_fnames[idx])
+	print("            data: %s" % data_fnames[idx])
 
-fig, ax = plt.subplots()
-ax.imshow(img)
-ax.scatter(landmarks[:,0], landmarks[:,1])
-plt.show()
+	img = images[idx]
+	landmarks = landmarks_2d[idx]
+	fig, ax = plt.subplots()
+	ax.imshow(img)
+	ax.scatter(landmarks[:,0], landmarks[:,1])
+	plt.show()
