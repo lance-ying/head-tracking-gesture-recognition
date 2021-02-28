@@ -69,6 +69,7 @@ if __name__ == "__main__":
 			idx = np.random.randint(len(images))
 			print("Displaying image: %s" % image_fnames[idx])
 			print("            data: %s" % data_fnames[idx])
+			print("           index: %d" % idx)
 
 			img = images[idx]
 			landmarks = landmarks_2d[idx]
