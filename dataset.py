@@ -53,6 +53,14 @@ def load_data(image_fnames, data_fnames):
 	print("Loaded %d images" % len(images))
 	return images, landmarks_2d, landmarks_3d
 
+def augment_flip(images, landmarks_2d, landmarks_3d):
+	# Doubles the number of images by flipping each one horizontally,
+	# and also producing the appropriate corresponding landmark locations
+	for i in range(len(images)):
+		images.append(np.flip(images[i], axis=1))
+		landmarks_2d.append(np.flip(landmarks_2d[i], axis=1))
+		landmarks_3d.append(np.flip(landmarks_3d[i], axis=1))
+
 if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
