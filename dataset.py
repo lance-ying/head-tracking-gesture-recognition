@@ -56,13 +56,17 @@ def load_data(image_fnames, data_fnames):
 if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
-	idx = np.random.randint(len(images))
-	print("Displaying image: %s" % image_fnames[idx])
-	print("            data: %s" % data_fnames[idx])
+	try:
+		while True:
+			idx = np.random.randint(len(images))
+			print("Displaying image: %s" % image_fnames[idx])
+			print("            data: %s" % data_fnames[idx])
 
-	img = images[idx]
-	landmarks = landmarks_2d[idx]
-	fig, ax = plt.subplots()
-	ax.imshow(img)
-	ax.scatter(landmarks[:,0], landmarks[:,1])
-	plt.show()
+			img = images[idx]
+			landmarks = landmarks_2d[idx]
+			fig, ax = plt.subplots()
+			ax.imshow(img)
+			ax.scatter(landmarks[:,0], landmarks[:,1])
+			plt.show()
+	except KeyboardInterrupt:
+		pass
