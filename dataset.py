@@ -67,6 +67,9 @@ if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
 	augment_flip(images, landmarks_2d, landmarks_3d)
+	images = np.array(images)
+	landmarks_2d = np.array(landmarks_2d)
+	landmarks_3d = np.array(landmarks_3d)
 	try:
 		while True:
 			idx = np.random.randint(len(images))
