@@ -64,11 +64,16 @@ def augment_flip(images, landmarks_2d, landmarks_3d):
 if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
+	augment_flip(images, landmarks_2d, landmarks_3d)
 	try:
 		while True:
 			idx = np.random.randint(len(images))
-			print("Displaying image: %s" % image_fnames[idx])
-			print("            data: %s" % data_fnames[idx])
+			if idx > len(image_fnames):
+				print("Displaying image: %s (flipped)" % image_fnames[idx - len(image_fnames)])
+				print("            data: %s" % data_fnames[idx - len(data_fnames)])
+			else:
+				print("Displaying image: %s (flipped)" % image_fnames[idx])
+				print("            data: %s" % data_fnames[idx])
 			print("           index: %d" % idx)
 
 			img = images[idx]
