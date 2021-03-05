@@ -63,42 +63,62 @@ class Net(nn.Module):
 
         return h
 
-def train(model, optimizer, criterion, epoch, X_train, X_val, Y_train, Y_val, train_losses, val_losses):
+def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, train_losses, val_losses):
     model.train()
-    tr_loss = 0
-    # getting the training set
-    x_train, y_train = Variable(torch.tensor(X_train).unsqueeze(1).float()), Variable(torch.tensor(Y_train.reshape(Y_train.shape[0],-1)).float())
-    # getting the validation set
-    x_val, y_val = Variable(torch.tensor(X_val).unsqueeze(1).float()), Variable(torch.tensor(Y_val.reshape(Y_val.shape[0],-1)).float())
-    # converting the data into GPU format
-    # if torch.cuda.is_available():
-    #     x_train = x_train.cuda()
-    #     y_train = y_train.cuda()
-    #     x_val = x_val.cuda()
-    #     y_val = y_val.cuda()
 
-    # clearing the Gradients of the model parameters
-    optimizer.zero_grad()
-    
-    # prediction for training and validation set
-    output_train = model(x_train)
-    output_val = model(x_val)
+    cur_train_loss = 0.0
+    cur_valid_loss = 0.0
 
-    # computing the training and validation loss
-    # print(output_train.detach().numpy().shape)
-    # print(y_train.detach().numpy().shape)
-    loss_train = criterion(output_train, y_train)
-    loss_val = criterion(output_val, y_val)
-    train_losses.append(loss_train)
-    val_losses.append(loss_val)
+    for x_train, y_train in train_dataset:
+        # getting the training set
+        x_train, y_train = Variable(torch.tensor(x_train).unsqueeze(1).float()), Variable(torch.tensor(y_train.reshape(y_train.shape[0],-1)).float())
+        optimizer.zero_grad()
+        output = model(x_train)
+        loss = criterion(output, y_train)
+        loss.backward()
+        optimizer.step()
+        cur_train_loss += loss.item() * x_train.size(0)
 
-    # computing the updated weights of all the model parameters
-    loss_train.backward()
-    optimizer.step()
-    tr_loss = loss_train.item()
+    model.eval()
+    for x_val, y_val in valid_dataset:
+        # x_val, y_val = Variable(torch.tensor(X_val).unsqueeze(1).float()), Variable(torch.tensor(Y_val.reshape(Y_val.shape[0],-1)).float())
+        output = model(x_val)
+        loss = criterion(output, y_train)
+        cur_valid_loss += loss.item() * x_val.size(0)
+
+    # avg_train_loss = cur_train_loss / len(trainLoader.sampler)
+    # avg_valid_loss = cur_valid_loss / len(validLoader.sampler)
+
+    #     # getting the validation set
+    #     # converting the data into GPU format
+    #     # if torch.cuda.is_available():
+    #     #     x_train = x_train.cuda()
+    #     #     y_train = y_train.cuda()
+    #     #     x_val = x_val.cuda()
+    #     #     y_val = y_val.cuda()
+
+    #     # clearing the Gradients of the model parameters
+    #     optimizer.zero_grad()
+        
+    #     # prediction for training and validation set
+    #     output_train = model(x_train)
+    #     output_val = model(x_val)
+
+    #     # computing the training and validation loss
+    #     # print(output_train.detach().numpy().shape)
+    #     # print(y_train.detach().numpy().shape)
+    #     loss_train = criterion(output_train, y_train)
+    #     loss_val = criterion(output_val, y_val)
+    #     train_losses.append(loss_train)
+    #     val_losses.append(loss_val)
+
+    #     # computing the updated weights of all the model parameters
+    #     loss_train.backward()
+    #     optimizer.step()
+    #     tr_loss = loss_train.item()
     if epoch%2 == 0:
         # printing the validation loss
-        print('Epoch : ',epoch+1, '\t', 'loss :', loss_val)
+        print('Epoch : ',epoch+1, '\t', 'loss :', avg_valid_loss)
 
 def main():
     model = Net()
@@ -112,7 +132,18 @@ def main():
     landmarks_2d = np.array(landmarks_2d)
     landmarks_3d = np.array(landmarks_3d)
 
-    X_train, X_val, Y_train, Y_val = train_test_split(images, landmarks_2d, train_size=0.01, test_size=0.01)
+    X_train, X_val, Y_train, Y_val = train_test_split(images, landmarks_2d, train_size=0.8, test_size=0.2)
+
+    from torch.utils.data import DataLoader, TensorDataset
+
+    BATCH_SIZE = 20
+
+    train_dataset = TensorDataset(torch.tensor(X_train), torch.tensor(Y_train))
+    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+
+    valid_dataset = TensorDataset(torch.tensor(X_val), torch.tensor(Y_val))
+    valid_dataloader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=False)
+
 
     # defining the optimizer
     optimizer = optim.Adam(model.parameters(), lr=0.07)
@@ -130,7 +161,7 @@ def main():
     val_losses = []
     # training the model
     for epoch in range(n_epochs):
-        train(model, optimizer, criterion, epoch, X_train, X_val, Y_train, Y_val, train_losses, val_losses)
+        train(model, optimizer, criterion, epoch, train_dataloader, valid_dataloader, train_losses, val_losses)
 
 
 if __name__ == "__main__": 
