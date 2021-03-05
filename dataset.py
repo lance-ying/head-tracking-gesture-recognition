@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import image
 import os, os.path
+import cv2
 from tqdm import tqdm
 
 def find_images():
@@ -45,7 +46,7 @@ def load_data(image_fnames, data_fnames, use_loading_bar=True):
 	# Load the image and landmark data for each listed filename above.
 	# Note that the indices must correspond -- don't shuffle them!
 	print("Loading images...")
-	images = [matplotlib.image.imread(image_fname) for image_fname in (tqdm(image_fnames) if use_loading_bar else image_fnames)]
+	images = [cv2.cvtColor(matplotlib.image.imread(image_fname), cv2.COLOR_RGB2GRAY) for image_fname in (tqdm(image_fnames) if use_loading_bar else image_fnames)]
 	print("Loading landmarks...")
 	datas = [scipy.io.loadmat(data_fname) for data_fname in (tqdm(data_fnames) if use_loading_bar else data_fnames)]
 	landmarks_2d = [data["pts_2d"] for data in datas]
