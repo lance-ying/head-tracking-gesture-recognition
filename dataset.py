@@ -45,9 +45,9 @@ def load_data(image_fnames, data_fnames):
 	# Load the image and landmark data for each listed filename above.
 	# Note that the indices must correspond -- don't shuffle them!
 	print("Loading images...")
-	images = [matplotlib.image.imread(image_fname) for image_fname in tqdm(image_fnames)]
+	images = [matplotlib.image.imread(image_fname) for image_fname in tqdm(image_fnames, position=0, leave=True)]
 	print("Loading landmarks...")
-	datas = [scipy.io.loadmat(data_fname) for data_fname in tqdm(data_fnames)]
+	datas = [scipy.io.loadmat(data_fname) for data_fname in tqdm(data_fnames, position=0, leave=True)]
 	landmarks_2d = [data["pts_2d"] for data in datas]
 	landmarks_3d = [data["pts_3d"] for data in datas]
 	print("Loaded %d images" % len(images))
