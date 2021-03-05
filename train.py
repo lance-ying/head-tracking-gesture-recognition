@@ -117,9 +117,10 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
     #     loss_train.backward()
     #     optimizer.step()
     #     tr_loss = loss_train.item()
-    if epoch%2 == 0:
-        # printing the validation loss
-        print('Epoch : ',epoch+1, '\t', 'loss :', avg_valid_loss)
+    # if epoch%2 == 0:
+    #     # printing the validation loss
+    #     print('Epoch : ',epoch+1, '\t', 'loss :', avg_valid_loss)
+    print('Epoch : ',epoch+1, '\t', 'loss :', avg_valid_loss)
 
 def main():
     model = Net()
@@ -155,7 +156,7 @@ def main():
     #     model = model.cuda()
     #     criterion = criterion.cuda()
 
-    n_epochs = 100
+    n_epochs = 5
     # empty list to store training losses
     train_losses = []
     # empty list to store validation losses
