@@ -85,7 +85,7 @@ if __name__ == "__main__":
 			img = images[idx]
 			landmarks = landmarks_2d[idx]
 			fig, ax = plt.subplots()
-			ax.imshow(img)
+			ax.imshow(img, cmap="gray")
 			ax.scatter(landmarks[:,0], landmarks[:,1])
 			plt.show()
 	except KeyboardInterrupt:
