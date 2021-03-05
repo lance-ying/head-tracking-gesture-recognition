@@ -41,13 +41,13 @@ def find_images():
 	print("Found %d images" % len(image_fnames))
 	return image_fnames, data_fnames
 
-def load_data(image_fnames, data_fnames):
+def load_data(image_fnames, data_fnames, use_loading_bar=True):
 	# Load the image and landmark data for each listed filename above.
 	# Note that the indices must correspond -- don't shuffle them!
 	print("Loading images...")
-	images = [matplotlib.image.imread(image_fname) for image_fname in tqdm(image_fnames, position=0, leave=True)]
+	images = [matplotlib.image.imread(image_fname) for image_fname in (tqdm(image_fnames) if use_loading_bar else image_fnames)]
 	print("Loading landmarks...")
-	datas = [scipy.io.loadmat(data_fname) for data_fname in tqdm(data_fnames, position=0, leave=True)]
+	datas = [scipy.io.loadmat(data_fname) for data_fname in (tqdm(data_fnames) if use_loading_bar else data_fnames)]
 	landmarks_2d = [data["pts_2d"] for data in datas]
 	landmarks_3d = [data["pts_3d"] for data in datas]
 	print("Loaded %d images" % len(images))
