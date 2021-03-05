@@ -6,6 +6,7 @@ from torch.autograd import Variable
 import dataset
 from sklearn.model_selection import train_test_split
 import torch.optim as optim
+from tqdm import tqdm
 
 class Net(nn.Module):
     def __init__(self):
@@ -69,7 +70,7 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
     cur_train_loss = 0.0
     cur_valid_loss = 0.0
 
-    for x_train, y_train in train_dataset:
+    for x_train, y_train in tqdm(train_dataset):
         # getting the training set
         x_train, y_train = Variable(torch.tensor(x_train).unsqueeze(1).float()), Variable(torch.tensor(y_train.reshape(y_train.shape[0],-1)).float())
         optimizer.zero_grad()
