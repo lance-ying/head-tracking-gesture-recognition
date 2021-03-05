@@ -64,6 +64,10 @@ def augment_flip(images, landmarks_2d, landmarks_3d):
 		landmarks_3d.append(landmarks_3d[i].copy())
 		landmarks_3d[-1][:,0] = images[-1].shape[1] - landmarks_3d[-1][:,0]
 
+def get_color_image(image_fnames, idx):
+	image_fname = image_fnames[idx % len(image_fnames)]
+	return matplotlib.image.imread(image_fname)
+
 if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
@@ -85,7 +89,8 @@ if __name__ == "__main__":
 			img = images[idx]
 			landmarks = landmarks_2d[idx]
 			fig, ax = plt.subplots()
-			ax.imshow(img, cmap="gray")
+			# ax.imshow(img, cmap="gray")
+			ax.imshow(get_color_image(image_fnames, idx))
 			ax.scatter(landmarks[:,0], landmarks[:,1])
 			plt.show()
 	except KeyboardInterrupt:
