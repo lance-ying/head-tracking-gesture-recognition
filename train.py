@@ -87,8 +87,8 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
         loss = criterion(output, y_val)
         cur_valid_loss += loss.item() * x_val.size(0)
 
-    # avg_train_loss = cur_train_loss / len(trainLoader.sampler)
-    # avg_valid_loss = cur_valid_loss / len(validLoader.sampler)
+    avg_train_loss = cur_train_loss / len(trainLoader.sampler)
+    avg_valid_loss = cur_valid_loss / len(validLoader.sampler)
 
     #     # getting the validation set
     #     # converting the data into GPU format
