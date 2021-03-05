@@ -82,9 +82,9 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
 
     model.eval()
     for x_val, y_val in valid_dataset:
-        # x_val, y_val = Variable(torch.tensor(X_val).unsqueeze(1).float()), Variable(torch.tensor(Y_val.reshape(Y_val.shape[0],-1)).float())
+        x_val, y_val = Variable(torch.tensor(x_val).unsqueeze(1).float()), Variable(torch.tensor(y_val.reshape(y_val.shape[0],-1)).float())
         output = model(x_val)
-        loss = criterion(output, y_train)
+        loss = criterion(output, y_val)
         cur_valid_loss += loss.item() * x_val.size(0)
 
     # avg_train_loss = cur_train_loss / len(trainLoader.sampler)
