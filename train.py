@@ -73,6 +73,9 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
     for x_train, y_train in tqdm(train_dataset):
         # getting the training set
         x_train, y_train = Variable(torch.tensor(x_train).unsqueeze(1).float()), Variable(torch.tensor(y_train.reshape(y_train.shape[0],-1)).float())
+        if torch.cuda.is_available():
+            x_train = x_train.cuda()
+            y_train = y_train.cuda()
         optimizer.zero_grad()
         output = model(x_train)
         loss = criterion(output, y_train)
@@ -83,6 +86,9 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
     model.eval()
     for x_val, y_val in valid_dataset:
         x_val, y_val = Variable(torch.tensor(x_val).unsqueeze(1).float()), Variable(torch.tensor(y_val.reshape(y_val.shape[0],-1)).float())
+        if torch.cuda.is_available():
+            x_val = x_val.cuda()
+            y_val = y_val.cuda()
         output = model(x_val)
         loss = criterion(output, y_val)
         cur_valid_loss += loss.item() * x_val.size(0)
@@ -138,7 +144,7 @@ def main():
 
     from torch.utils.data import DataLoader, TensorDataset
 
-    BATCH_SIZE = 20
+    BATCH_SIZE = 10
 
     train_dataset = TensorDataset(torch.tensor(X_train), torch.tensor(Y_train))
     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -152,9 +158,9 @@ def main():
     # defining the loss function
     criterion = nn.MSELoss()
     # checking if GPU is available
-    # if torch.cuda.is_available():
-    #     model = model.cuda()
-    #     criterion = criterion.cuda()
+    if torch.cuda.is_available():
+        model = model.cuda()
+        criterion = criterion.cuda()
 
     n_epochs = 5
     # empty list to store training losses
