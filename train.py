@@ -64,13 +64,13 @@ class Net(nn.Module):
 
         return h
 
-def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, train_losses, val_losses):
+def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loading_bar=True):
     model.train()
 
     cur_train_loss = 0.0
     cur_valid_loss = 0.0
 
-    for x_train, y_train in tqdm(train_dataset):
+    for x_train, y_train in (tqdm(train_dataset) if use_loading_bar else train_dataset):
         # getting the training set
         x_train, y_train = Variable(torch.tensor(x_train).unsqueeze(1).float()), Variable(torch.tensor(y_train.reshape(y_train.shape[0],-1)).float())
         if torch.cuda.is_available():
@@ -134,7 +134,7 @@ def main():
     # print(sum(p.numel() for p in model.parameters() if p.requires_grad))
 
     image_fnames, data_fnames = dataset.find_images()
-    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames)
+    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=False)
     dataset.augment_flip(images, landmarks_2d, landmarks_3d)
     images = np.array(images)
     landmarks_2d = np.array(landmarks_2d)
@@ -169,7 +169,7 @@ def main():
     val_losses = []
     # training the model
     for epoch in range(n_epochs):
-        train(model, optimizer, criterion, epoch, train_dataloader, valid_dataloader, train_losses, val_losses)
+        train(model, optimizer, criterion, epoch, train_dataloader, valid_dataloader, train_losses, val_losses, use_loading_bar=False)
 
 
 if __name__ == "__main__": 
