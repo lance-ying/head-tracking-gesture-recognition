@@ -97,7 +97,10 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
             x_val = x_val.cuda()
             y_val = y_val.cuda()
         output = model(x_val)
-        y_out = output.detach().numpy()[0]
+        if torch.cuda.is_available() and use_cuda:
+            y_out = output.cpu().detach().numpy()[0]
+        else:
+            y_out = output.detach().numpy()[0]
         loss = criterion(output, y_val)
         cur_valid_loss += loss.item() * x_val.size(0)
 
