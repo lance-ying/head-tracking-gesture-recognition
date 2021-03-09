@@ -65,7 +65,7 @@ class Net(nn.Module):
 
         return h
 
-def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loading_bar=True):
+def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loading_bar=True, use_cuda=True):
     model.train()
 
     cur_train_loss = 0.0
@@ -74,7 +74,7 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
     for x_train, y_train in (tqdm(train_dataset) if use_loading_bar else train_dataset):
         # getting the training set
         x_train, y_train = Variable(torch.tensor(x_train).unsqueeze(1).float()), Variable(torch.tensor(y_train.reshape(y_train.shape[0],-1)).float())
-        if torch.cuda.is_available():
+        if torch.cuda.is_available() and use_cuda:
             x_train = x_train.cuda()
             y_train = y_train.cuda()
         optimizer.zero_grad()
@@ -93,7 +93,7 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
         x_sample = x_val[0].numpy().copy()
         y_sample = y_val[0].numpy().copy()
         x_val, y_val = Variable(torch.tensor(x_val).unsqueeze(1).float()), Variable(torch.tensor(y_val.reshape(y_val.shape[0],-1)).float())
-        if torch.cuda.is_available():
+        if torch.cuda.is_available() and use_cuda:
             x_val = x_val.cuda()
             y_val = y_val.cuda()
         output = model(x_val)
@@ -148,10 +148,13 @@ def main():
 
     model = Net()
 
+    use_cuda = True
+    use_loading_bar = False
+
     # print(sum(p.numel() for p in model.parameters() if p.requires_grad))
 
     image_fnames, data_fnames = dataset.find_images()
-    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=True)
+    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
     dataset.augment_flip(images, landmarks_2d, landmarks_3d)
     images = np.array(images)
     landmarks_2d = np.array(landmarks_2d)
@@ -175,7 +178,7 @@ def main():
     # defining the loss function
     criterion = nn.MSELoss()
     # checking if GPU is available
-    if torch.cuda.is_available():
+    if torch.cuda.is_available() and use_cuda:
         model = model.cuda()
         criterion = criterion.cuda()
 
@@ -186,7 +189,7 @@ def main():
     val_losses = []
     # training the model
     for epoch in range(n_epochs):
-        train(epoch, train_dataloader, valid_dataloader, train_losses, val_losses, use_loading_bar=True)
+        train(epoch, train_dataloader, valid_dataloader, train_losses, val_losses, use_loading_bar=use_loading_bar, use_cuda=use_cuda)
 
 
 if __name__ == "__main__": 
