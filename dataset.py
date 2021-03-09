@@ -66,7 +66,10 @@ def augment_flip(images, landmarks_2d, landmarks_3d):
 
 def get_color_image(image_fnames, idx):
 	image_fname = image_fnames[idx % len(image_fnames)]
-	return matplotlib.image.imread(image_fname)
+	if idx // len(image_fnames) == 1:
+		return np.flip(matplotlib.image.imread(image_fname), axis=1)
+	else:
+		return matplotlib.image.imread(image_fname)
 
 if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
