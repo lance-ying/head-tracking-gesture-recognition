@@ -87,11 +87,11 @@ if __name__ == "__main__":
 			print("           index: %d" % idx)
 
 			img = images[idx]
-			landmarks = landmarks_2d[idx]
+			landmarks = landmarks_2d[idx].flatten()
 			fig, ax = plt.subplots()
 			# ax.imshow(img, cmap="gray")
 			ax.imshow(get_color_image(image_fnames, idx))
-			ax.scatter(landmarks[:,0], landmarks[:,1])
+			ax.scatter(landmarks[0::2], landmarks[1::2])
 			plt.show()
 	except KeyboardInterrupt:
 		pass
