@@ -7,6 +7,7 @@ import dataset
 from sklearn.model_selection import train_test_split
 import torch.optim as optim
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 class Net(nn.Module):
     def __init__(self):
@@ -64,7 +65,7 @@ class Net(nn.Module):
 
         return h
 
-def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loading_bar=True):
+def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loading_bar=True):
     model.train()
 
     cur_train_loss = 0.0
@@ -83,15 +84,29 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
         optimizer.step()
         cur_train_loss += loss.item() * x_train.size(0)
 
+    x_sample = None
+    y_sample = None
+    y_out = None
+
     model.eval()
     for x_val, y_val in valid_dataset:
+        x_sample = x_val[0].numpy().copy()
+        y_sample = y_val[0].numpy().copy()
         x_val, y_val = Variable(torch.tensor(x_val).unsqueeze(1).float()), Variable(torch.tensor(y_val.reshape(y_val.shape[0],-1)).float())
         if torch.cuda.is_available():
             x_val = x_val.cuda()
             y_val = y_val.cuda()
         output = model(x_val)
+        y_out = output.detach().numpy()[0]
         loss = criterion(output, y_val)
         cur_valid_loss += loss.item() * x_val.size(0)
+
+    fig, ax = plt.subplots()
+    ax.imshow(x_sample, cmap="gray")
+    ax.scatter(y_sample[:,0], y_sample[:,1])
+    ax.scatter(y_out[0::2], y_out[1::2])
+    plt.savefig("epoch%03d.png" % epoch)
+    plt.close()
 
     avg_train_loss = cur_train_loss / len(train_dataset.sampler)
     avg_valid_loss = cur_valid_loss / len(valid_dataset.sampler)
@@ -129,12 +144,14 @@ def train(model, optimizer, criterion, epoch, train_dataset, valid_dataset, trai
     print('Epoch : ',epoch+1, '\t', 'loss :', avg_valid_loss)
 
 def main():
+    global model, optimizer, criterion
+
     model = Net()
 
     # print(sum(p.numel() for p in model.parameters() if p.requires_grad))
 
     image_fnames, data_fnames = dataset.find_images()
-    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=False)
+    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=True)
     dataset.augment_flip(images, landmarks_2d, landmarks_3d)
     images = np.array(images)
     landmarks_2d = np.array(landmarks_2d)
@@ -144,7 +161,7 @@ def main():
 
     from torch.utils.data import DataLoader, TensorDataset
 
-    BATCH_SIZE = 10
+    BATCH_SIZE = 16
 
     train_dataset = TensorDataset(torch.tensor(X_train), torch.tensor(Y_train))
     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -154,7 +171,7 @@ def main():
 
 
     # defining the optimizer
-    optimizer = optim.Adam(model.parameters(), lr=0.07)
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
     # defining the loss function
     criterion = nn.MSELoss()
     # checking if GPU is available
@@ -162,14 +179,14 @@ def main():
         model = model.cuda()
         criterion = criterion.cuda()
 
-    n_epochs = 5
+    n_epochs = 100
     # empty list to store training losses
     train_losses = []
     # empty list to store validation losses
     val_losses = []
     # training the model
     for epoch in range(n_epochs):
-        train(model, optimizer, criterion, epoch, train_dataloader, valid_dataloader, train_losses, val_losses, use_loading_bar=False)
+        train(epoch, train_dataloader, valid_dataloader, train_losses, val_losses, use_loading_bar=True)
 
 
 if __name__ == "__main__": 
