@@ -191,6 +191,8 @@ def main():
     for epoch in range(n_epochs):
         train(epoch, train_dataloader, valid_dataloader, train_losses, val_losses, use_loading_bar=use_loading_bar, use_cuda=use_cuda)
 
+    torch.save(model.state_dict(), "model")
+
 
 if __name__ == "__main__": 
     main()
