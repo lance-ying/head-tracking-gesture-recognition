@@ -7,7 +7,7 @@ import os, os.path
 import cv2
 from tqdm import tqdm
 
-from torchvision.transforms import RandomCrop, Rescale, Normalize
+from torchvision.transforms import RandomCrop
 
 def find_images():
 	# This will search the data directory to get the filenames of all images,
