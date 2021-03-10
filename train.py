@@ -9,6 +9,18 @@ import torch.optim as optim
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
+class Network(nn.Module):
+    def __init__(self,num_classes=136):
+        super().__init__()
+        self.model_name='resnet18'
+        self.model=models.resnet18()
+        self.model.conv1=nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.model.fc=nn.Linear(self.model.fc.in_features, num_classes)
+        
+    def forward(self, x):
+        x=self.model(x)
+        return x
+
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -149,7 +161,7 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
 def main():
     global model, optimizer, criterion
 
-    model = Net()
+    model = Network()
 
     use_cuda = True
     use_loading_bar = False
