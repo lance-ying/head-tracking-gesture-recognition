@@ -6,6 +6,7 @@ from matplotlib import image
 import os, os.path
 import cv2
 from tqdm import tqdm
+from torchvision import RandomCrop
 
 def find_images():
 	# This will search the data directory to get the filenames of all images,
@@ -75,7 +76,9 @@ if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
 	augment_flip(images, landmarks_2d, landmarks_3d)
+	crop = RandomCrop(50)
 	images = np.array(images)
+	images=crop(images)
 	landmarks_2d = np.array(landmarks_2d)
 	landmarks_3d = np.array(landmarks_3d)
 	try:
