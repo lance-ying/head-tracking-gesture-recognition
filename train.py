@@ -125,8 +125,8 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
     plt.savefig("epoch%03d.png" % epoch)
     plt.close()
 
-    avg_train_loss = cur_train_loss / len(train_dataset.sampler)
-    avg_valid_loss = cur_valid_loss / len(valid_dataset.sampler)
+    avg_train_loss = cur_train_loss / len(train_dataset)
+    avg_valid_loss = cur_valid_loss / len(valid_dataset)
 
     #     # getting the validation set
     #     # converting the data into GPU format
