@@ -192,7 +192,7 @@ def main():
 
 
     # defining the optimizer
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.1)
     # defining the loss function
     criterion = nn.MSELoss()
     # checking if GPU is available
