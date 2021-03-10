@@ -94,7 +94,8 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
         loss = criterion(output, y_train)
         loss.backward()
         optimizer.step()
-        cur_train_loss += loss.item() * x_train.size(0)
+        cur_train_loss += loss.item()
+        # cur_train_loss += loss.item() * x_train.size(0)
 
     x_sample = None
     y_sample = None
