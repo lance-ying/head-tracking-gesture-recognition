@@ -114,7 +114,8 @@ def train(epoch, train_dataset, valid_dataset, train_losses, val_losses, use_loa
         else:
             y_out = output.detach().numpy()[0]
         loss = criterion(output, y_val)
-        cur_valid_loss += loss.item() * x_val.size(0)
+        # cur_valid_loss += loss.item() * x_val.size(0)
+        cur_valid_loss += loss.item()
 
     fig, ax = plt.subplots()
     ax.imshow(x_sample, cmap="gray")
