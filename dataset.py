@@ -6,7 +6,7 @@ from matplotlib import image
 import os, os.path
 import cv2
 from tqdm import tqdm
-from torchvision import RandomCrop
+from torchvision import RandomCrop, Rescale, Normalize
 
 def find_images():
 	# This will search the data directory to get the filenames of all images,
@@ -53,6 +53,9 @@ def load_data(image_fnames, data_fnames, use_loading_bar=True):
 	landmarks_2d = [data["pts_2d"] for data in datas]
 	landmarks_3d = [data["pts_3d"] for data in datas]
 	print("Loaded %d images" % len(images))
+	tx=transforms.Compose([Rescale(250),RandomCrop(224),Normalize()])
+	# images = np.array(images)
+	images=tx(images)
 	return images, landmarks_2d, landmarks_3d
 
 def augment_flip(images, landmarks_2d, landmarks_3d):
@@ -76,9 +79,9 @@ if __name__ == "__main__":
 	image_fnames, data_fnames = find_images()
 	images, landmarks_2d, landmarks_3d = load_data(image_fnames, data_fnames)
 	augment_flip(images, landmarks_2d, landmarks_3d)
-	crop = RandomCrop(50)
+	tx=transforms.Compose([Rescale(250),RandomCrop(224),Normalize()])
 	images = np.array(images)
-	images=crop(images)
+	images=tx(images)
 	landmarks_2d = np.array(landmarks_2d)
 	landmarks_3d = np.array(landmarks_3d)
 	try:
