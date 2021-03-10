@@ -57,7 +57,7 @@ def load_data(image_fnames, data_fnames, use_loading_bar=True):
 	# tx=transforms.Compose([Rescale(250),RandomCrop(224),Normalize()])
 	# images = np.array(images)
 	# images=tx(images)
-	images=RandomCrop(250)(images)
+	# images=RandomCrop(250)(images)
 	return images, landmarks_2d, landmarks_3d
 
 def augment_flip(images, landmarks_2d, landmarks_3d):
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 	augment_flip(images, landmarks_2d, landmarks_3d)
 	# tx=transforms.Compose([Rescale(250),RandomCrop(224),Normalize()])
 	images = np.array(images)
-	images=RandomCrop(200)(images)
+	# images=RandomCrop(200)(images)
 	landmarks_2d = np.array(landmarks_2d)
 	landmarks_3d = np.array(landmarks_3d)
 	try:
