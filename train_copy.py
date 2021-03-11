@@ -135,7 +135,7 @@ def main():
     #     model = model.cuda(0)
     #     criterion = criterion.cuda(0)
 
-    n_epochs = 10
+    n_epochs = 100
     # empty list to store training losses
     train_losses = []
     # empty list to store validation losses
