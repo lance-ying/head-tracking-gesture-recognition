@@ -115,10 +115,12 @@ def main():
     print(label.shape)
 
     model = Net()
-    # model.cuda()
+    criterion = nn.MSELoss()
+    if torch.cuda.is_available():
+        model=model.cuda()
     # defining the optimizer
     # defining the loss function
-    criterion = nn.MSELoss()
+        criterion=criterion.cuda()
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     loss_min = np.inf
@@ -149,7 +151,10 @@ def main():
             img = img.unsqueeze(1)  # if torch tensor
             label=label.view(label.size(0),-1)
             optimizer.zero_grad()
-            prediction=model(img.float())
+            img=img.cuda()
+            if torch.cuda.is_available():
+                label=label.cuda
+                prediction=model(img.float())
             loss=criterion(prediction, label)
             loss.backward()
             optimizer.step()
