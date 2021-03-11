@@ -159,7 +159,7 @@ def main():
             loss.backward()
             optimizer.step()
             loss_train+=loss.item()
-        print("epoch=",epoch, "loss=",loss_train/len(train_loader))
+        print("epoch=",epoch, "loss=",loss_train/len(train_dataset))
 
 
 if __name__ == "__main__": 
