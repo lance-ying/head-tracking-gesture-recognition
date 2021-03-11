@@ -151,10 +151,10 @@ def main():
             img = img.unsqueeze(1)  # if torch tensor
             label=label.view(label.size(0),-1)
             optimizer.zero_grad()
-            img=img.cuda()
             if torch.cuda.is_available():
-                label=label.cuda
-                prediction=model(img.float())
+                label=label.cuda()
+                img=img.cuda()
+            prediction=model(img.float())
             loss=criterion(prediction, label)
             loss.backward()
             optimizer.step()
