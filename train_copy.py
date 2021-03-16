@@ -159,7 +159,34 @@ def main():
             loss.backward()
             optimizer.step()
             loss_train+=loss.item()
-        print("epoch=",epoch, "loss=",loss_train/len(train_dataset))
+    t=time.time()
+    runtime=t-prev_time
+    train_loss.append(loss_train/len(train_loader))
+    
+    with torch.no_grad():
+        for step in range(1,len(val_loader)+1):
+            img, label = next(iter(val_loader))
+            img=img.cuda()
+            label=label.cuda()
+            prediction=model(img)
+            loss=criterion(prediction, label)
+            loss_valid+=loss.item()
+        valid_loss.append(loss_train/len(val_loader))
+
+    if epoch%2==0:
+        print("epoch=",epoch, "train_loss=",loss_train/len(train_loader),"valid_loss=", loss_valid/len(val_loader),"time=",runtime)
+    prev_time=time.time()
+    
+
+    x_sample = x_val[0].numpy().copy()
+    y_sample = y_val[0].numpy().copy()
+    fig, ax = plt.subplots()
+    y_out = model(x_sample).cpu().detach().numpy()[0]
+    ax.imshow(x_sample, cmap="gray")
+    ax.scatter(y_sample[:,0], y_sample[:,1])
+    ax.scatter(y_out[0::2], y_out[1::2])
+    plt.savefig("epoch%03d.png" % epoch)
+    plt.close()
 
 
 if __name__ == "__main__": 
