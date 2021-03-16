@@ -135,7 +135,7 @@ def main():
     #     model = model.cuda(0)
     #     criterion = criterion.cuda(0)
 
-    n_epochs = 100
+    n_epochs = 10
     # empty list to store training losses
     train_losses = []
     # empty list to store validation losses
@@ -173,9 +173,9 @@ def main():
             loss_valid+=loss.item()
         valid_loss.append(loss_train/len(val_loader))
 
-    if epoch%2==0:
-        print("epoch=",epoch, "train_loss=",loss_train/len(train_loader),"valid_loss=", loss_valid/len(val_loader),"time=",runtime)
-    prev_time=time.time()
+        if epoch%2==0:
+            print("epoch=",epoch, "train_loss=",loss_train/len(train_loader),"valid_loss=", loss_valid/len(val_loader),"time=",runtime)
+        prev_time=time.time()
     
 
     x_sample = x_val[0].numpy().copy()
