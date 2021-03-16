@@ -170,7 +170,7 @@ def main():
                 label=label.view(label.size(0),-1)
                 img=img.cuda()
                 label=label.cuda()
-                prediction=model(img)
+                prediction=model(img.float())
                 loss=criterion(prediction, label)
                 loss_valid+=loss.item()
             valid_loss.append(loss_train/len(val_loader))
