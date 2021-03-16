@@ -159,19 +159,19 @@ def main():
             loss.backward()
             optimizer.step()
             loss_train+=loss.item()
-    t=time.time()
-    runtime=t-prev_time
-    train_loss.append(loss_train/len(train_loader))
+        t=time.time()
+        runtime=t-prev_time
+        train_loss.append(loss_train/len(train_loader))
     
-    with torch.no_grad():
-        for step in range(1,len(val_loader)+1):
-            img, label = next(iter(val_loader))
-            img=img.cuda()
-            label=label.cuda()
-            prediction=model(img)
-            loss=criterion(prediction, label)
-            loss_valid+=loss.item()
-        valid_loss.append(loss_train/len(val_loader))
+        with torch.no_grad():
+            for step in range(1,len(val_loader)+1):
+                img, label = next(iter(val_loader))
+                img=img.cuda()
+                label=label.cuda()
+                prediction=model(img)
+                loss=criterion(prediction, label)
+                loss_valid+=loss.item()
+            valid_loss.append(loss_train/len(val_loader))
 
         if epoch%2==0:
             print("epoch=",epoch, "train_loss=",loss_train/len(train_loader),"valid_loss=", loss_valid/len(val_loader),"time=",runtime)
