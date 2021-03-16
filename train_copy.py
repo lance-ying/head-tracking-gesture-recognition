@@ -142,6 +142,7 @@ def main():
     valid_loss = []
     prev_time=time.time()
     # training the model
+
     for epoch in range(n_epochs):
         loss_train = 0
         loss_valid = 0
@@ -179,12 +180,15 @@ def main():
             print("epoch=",epoch, "train_loss=",loss_train/len(train_loader),"valid_loss=", loss_valid/len(val_loader),"time=",runtime)
         prev_time=time.time()
     
+        if epoch%5==0:
+            filename = os.path.join(os.getcwd(),(str(epoch)+".checkpoint"))
+            torch.save(model.state_dict(), filename)
 
-    x_sample = X_val[0].numpy().copy()
-    y_sample = Y_val[0].numpy().copy()
+    x_sample = torch.from_numpy(X_val[0])..unsqueeze(1).float().cuda()
+    y_sample = Y_val[0]
     fig, ax = plt.subplots()
     y_out = model(x_sample).cpu().detach().numpy()[0]
-    ax.imshow(x_sample, cmap="gray")
+    ax.imshow(X_val[0], cmap="gray")
     ax.scatter(y_sample[:,0], y_sample[:,1])
     ax.scatter(y_out[0::2], y_out[1::2])
     plt.savefig("epoch%03d.png" % epoch)
