@@ -167,6 +167,8 @@ def main():
         with torch.no_grad():
             for step in range(1,len(val_loader)+1):
                 img, label = next(iter(val_loader))
+                img = img.unsqueeze(1)  # if torch tensor
+                label=label.view(label.size(0),-1)
                 img=img.cuda()
                 label=label.cuda()
                 prediction=model(img)
