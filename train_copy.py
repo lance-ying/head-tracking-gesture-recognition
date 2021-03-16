@@ -184,7 +184,7 @@ def main():
             filename = os.path.join(os.getcwd(),(str(epoch)+".checkpoint"))
             torch.save(model.state_dict(), filename)
 
-    x_sample = torch.from_numpy(X_val[0])..unsqueeze(1).float().cuda()
+    x_sample = torch.from_numpy(X_val[0]).unsqueeze(1).float().cuda()
     y_sample = Y_val[0]
     fig, ax = plt.subplots()
     y_out = model(x_sample).cpu().detach().numpy()[0]
