@@ -180,8 +180,8 @@ def main():
         prev_time=time.time()
     
 
-    x_sample = x_val[0].numpy().copy()
-    y_sample = y_val[0].numpy().copy()
+    x_sample = X_val[0].numpy().copy()
+    y_sample = Y_val[0].numpy().copy()
     fig, ax = plt.subplots()
     y_out = model(x_sample).cpu().detach().numpy()[0]
     ax.imshow(x_sample, cmap="gray")
