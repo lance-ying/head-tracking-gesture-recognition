@@ -140,6 +140,7 @@ def main():
     train_losses = []
     # empty list to store validation losses
     val_losses = []
+    prev_time=time.time()
     # training the model
     for epoch in range(n_epochs):
         loss_train = 0
