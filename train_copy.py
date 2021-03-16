@@ -152,9 +152,8 @@ def main():
             img = img.unsqueeze(1)  # if torch tensor
             label=label.view(label.size(0),-1)
             optimizer.zero_grad()
-            if torch.cuda.is_available():
-                label=label.cuda()
-                img=img.cuda()
+            label=label.cuda()
+            img=img.cuda()
             prediction=model(img.float())
             loss=criterion(prediction, label)
             loss.backward()
