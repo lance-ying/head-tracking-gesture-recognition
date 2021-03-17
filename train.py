@@ -67,7 +67,7 @@ def main():
 		loss_valid = 0
 		running_loss = 0
 		model.train()
-		for step in tqdm(range(1,len(train_loader)+1)):
+		for step in (tqdm(range(1,len(train_loader)+1)) if use_loading_bar else range(1,len(train_loader)+1)):
 			img, label = next(iter(train_loader))
 			img = img.unsqueeze(1)
 			label = label.view(label.size(0),-1)
