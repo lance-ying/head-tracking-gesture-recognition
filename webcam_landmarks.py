@@ -1,9 +1,15 @@
 import numpy as np
 import cv2
 
+from network import load_from_checkpoint
+
 mirror = True
+model_fname = "checkpoints/first_colab_model.checkpoint"
 
 cap = cv2.VideoCapture(0)
+model = load_from_checkpoint(model_fname)
+
+print("Press q to quit.")
 
 while(True):
 	# Capture frame-by-frame
