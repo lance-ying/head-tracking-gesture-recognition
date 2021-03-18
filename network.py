@@ -67,3 +67,9 @@ class Net(nn.Module):
 		h = self.FC2(h)
 
 		return h
+
+def load_from_checkpoint(fname):
+	dic = torch.load(fname)
+	model = Net()
+	model.load_state_dic(dic)
+	return model
