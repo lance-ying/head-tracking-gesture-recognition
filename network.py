@@ -73,3 +73,14 @@ def load_from_checkpoint(fname):
 	model = Net()
 	model.load_state_dict(dic)
 	return model
+
+def torchify_image(image):
+	try:
+		image.reshape(1,1,450,450)
+	except ValueError:
+		print("Image must be 450x450 resolution. Actual image shape was %s" % str(image.shape))
+		exit(1)
+	return torch.from_numpy(image.reshape(1,1,450,450)).type(torch.float)
+
+def detorchify_output(output):
+	return output.cpu().detach().numpy()[0]
