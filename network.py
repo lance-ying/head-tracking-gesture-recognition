@@ -71,5 +71,5 @@ class Net(nn.Module):
 def load_from_checkpoint(fname):
 	dic = torch.load(fname)
 	model = Net()
-	model.load_state_dic(dic)
+	model.load_state_dict(dic)
 	return model
