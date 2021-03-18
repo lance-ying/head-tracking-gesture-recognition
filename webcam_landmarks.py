@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-from network import load_from_checkpoint
+from network import load_from_checkpoint, torchify_image, detorchify_output
 
 mirror = True
 model_fname = "checkpoints/first_colab_model.checkpoint"
@@ -11,18 +11,34 @@ model = load_from_checkpoint(model_fname)
 
 print("Press q to quit.")
 
+def center_crop(img):
+	return img[h//2 - 450//2:h//2 + 450//2, w//2 - 450//2:w//2 + 450//2]
+
 while(True):
-	# Capture frame-by-frame
+	# Grab a frame
 	ret, frame = cap.read()
-	
+
 	if mirror:
 		frame = np.flip(frame, axis=1)
 
-	# Our operations on the frame come here
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-	# Display the resulting frame
-	cv2.imshow('frame',gray)
+	# Crop to 450x450 around the center
+	h, w = gray.shape
+	gray = center_crop(gray)
+
+	landmarks = detorchify_output(model(torchify_image(gray))).reshape(-1,2)
+
+	annotated = center_crop(frame)
+	for i in range(len(landmarks)):
+		x, y = landmarks[i]
+		h = int(y)
+		w = int(x)
+		for j in range(max(0,h-4), min(annotated.shape[0],h+4)):
+			for k in range(max(0,w-4), min(annotated.shape[1],w+4)):
+				annotated[j, k] = [0,0,255]
+
+	cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
 
