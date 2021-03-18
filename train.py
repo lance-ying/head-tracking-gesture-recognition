@@ -106,7 +106,7 @@ def main():
 		if epoch % epoch_print == 0:
 			print("epoch=", epoch, "train_loss=", loss_train/len(train_loader), "valid_loss=", loss_valid/len(val_loader), "time=", runtime)
 
-		if epoch % epoch_save == 0:
+		if epoch % epoch_save == 0 or epoch + 1 == num_epochs:
 			state = {
 				"epoch": epoch,
 				"state_dict": model.state_dict(),
