@@ -17,19 +17,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import dataset
 from network import Net
 
-def main():
-	# Parameters
-	batch_size = 64
-	use_gpu = False
-	train_size = 0.8
-	test_size = 0.2
-	use_loading_bar = True
-	learning_rate = 0.0001
-	num_epochs = 5
-	epoch_print = 1
-	epoch_save = 5
-	checkpoint_dir = "checkpoints/"
-
+def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, use_loading_bar = True, learning_rate = 0.0001, num_epochs = 5, epoch_print = 1, epoch_save = 5, checkpoint_dir = "checkpoints/"):
 	image_fnames, data_fnames = dataset.find_images()
 	images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
 	dataset.augment_flip(images, landmarks_2d, landmarks_3d)
