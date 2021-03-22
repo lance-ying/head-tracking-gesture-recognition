@@ -57,6 +57,10 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 		model.train()
 		for step in (tqdm(range(1,len(train_loader)+1)) if use_loading_bar else range(1,len(train_loader)+1)):
 			img, label = next(iter(train_loader))
+			np_img = img.numpy().astype(np.float32)/255
+			m = np.mean(np_img, axis=(1,2))
+			s = np.std(np_img, axis=(1,2))
+			img = torch.tensor((np_img - m[:,None,None]) / s[:,None,None])
 			img = img.unsqueeze(1)
 			label = label.view(label.size(0),-1)
 
@@ -65,7 +69,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 				label = label.cuda()
 				img = img.cuda()
 
-			prediction = model(img.float())
+			prediction = model(img)
 			loss = criterion(prediction, label)
 			
 			loss.backward()
