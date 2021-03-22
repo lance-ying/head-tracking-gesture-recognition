@@ -29,14 +29,12 @@ while(True):
 
 	landmarks = detorchify_output(model(torchify_image(gray))).reshape(-1,2)
 
-	annotated = center_crop(frame)
+	annotated = np.array(center_crop(frame))
 	for i in range(len(landmarks)):
 		x, y = landmarks[i]
 		h = int(y)
 		w = int(x)
-		for j in range(max(0,h-4), min(annotated.shape[0],h+4)):
-			for k in range(max(0,w-4), min(annotated.shape[1],w+4)):
-				annotated[j, k] = [0,0,255]
+		cv2.circle(annotated, tuple(landmarks[i]), 5, (0,0,255),-1)
 
 	cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 	if cv2.waitKey(1) & 0xFF == ord('q'):
