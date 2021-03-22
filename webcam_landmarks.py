@@ -22,7 +22,7 @@ while(True):
 	if mirror:
 		frame = np.flip(frame, axis=1)
 
-	gray = cv2.cvtColor(frame, cv2.COLOR_BG2GRAY)
+	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
 	# Crop to 450x450 around the center
 	h, w = gray.shape
