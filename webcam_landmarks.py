@@ -5,7 +5,8 @@ from network import load_from_checkpoint, torchify_image, detorchify_output
 from img import image_to_orientation
 
 mirror = True
-model_fname = "checkpoints/first_colab_model.checkpoint"
+normalize = True
+model_fname = "checkpoints/normalized.checkpoint"
 
 cap = cv2.VideoCapture(0)
 model = load_from_checkpoint(model_fname)
@@ -28,7 +29,16 @@ while(True):
 	h, w = gray.shape
 	gray = center_crop(gray)
 
-	landmarks = detorchify_output(model(torchify_image(gray))).reshape(-1,2)
+	if normalize:
+		img = gray.astype(np.float32)/255
+		m = np.mean(img)
+		s = np.std(img)
+		img -= m
+		img /= s
+	else:
+		img = gray
+
+	landmarks = detorchify_output(model(torchify_image(img))).reshape(-1,2)
 	p1, p2 = image_to_orientation(landmarks)
 
 	annotated = np.array(center_crop(frame))
