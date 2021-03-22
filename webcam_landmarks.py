@@ -22,7 +22,7 @@ while(True):
 	if mirror:
 		frame = np.flip(frame, axis=1)
 
-	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	gray = cv2.cvtColor(frame, cv2.COLOR_BG2GRAY)
 
 	# Crop to 450x450 around the center
 	h, w = gray.shape
@@ -30,7 +30,6 @@ while(True):
 
 	landmarks = detorchify_output(model(torchify_image(gray))).reshape(-1,2)
 	p1, p2 = image_to_orientation(landmarks)
-	print(p1, p2)
 
 	annotated = np.array(center_crop(frame))
 	for i in range(len(landmarks)):
