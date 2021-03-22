@@ -83,14 +83,18 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 		with torch.no_grad():
 			for step in range(1, len(val_loader)+1):
 				img, label = next(iter(val_loader))
-				img = img.unsqueeze(1)  # if torch tensor
+				np_img = img.numpy().astype(np.float32)/255
+				m = np.mean(np_img, axis=(1,2))
+				s = np.std(np_img, axis=(1,2))
+				img = torch.tensor((np_img - m[:,None,None]) / s[:,None,None])
+				img = img.unsqueeze(1)
 				label = label.view(label.size(0),-1)
 
 				if using_gpu:
 					img = img.cuda()
 					label = label.cuda()
 
-				prediction = model(img.float())
+				prediction = model(img)
 				loss = criterion(prediction, label)
 				loss_valid += loss.item()
 			valid_loss.append(loss_train / len(val_loader))
