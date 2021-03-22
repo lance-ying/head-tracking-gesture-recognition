@@ -21,7 +21,13 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 	image_fnames, data_fnames = dataset.find_images()
 	images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
 	dataset.augment_flip(images, landmarks_2d, landmarks_3d)
-	images = np.array(images)
+	print("Normalizing images...")
+	images = np.array(images, dtype=float) / 255
+	for i in (tqdm(range(len(images))) if use_loading_bar else range(len(images))):
+		m = np.mean(images[i])
+		s = np.std(images[i])
+		images[i] -= m
+		images[i] /= s
 	landmarks_2d = np.array(landmarks_2d)
 	landmarks_3d = np.array(landmarks_3d)
 
