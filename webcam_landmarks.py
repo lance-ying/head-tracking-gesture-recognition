@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 
 from network import load_from_checkpoint, torchify_image, detorchify_output
+from img import image_to_orientation
 
 mirror = True
 model_fname = "checkpoints/first_colab_model.checkpoint"
@@ -28,13 +29,16 @@ while(True):
 	gray = center_crop(gray)
 
 	landmarks = detorchify_output(model(torchify_image(gray))).reshape(-1,2)
+	p1, p2 = image_to_orientation(landmarks)
+	print(p1, p2)
 
 	annotated = np.array(center_crop(frame))
 	for i in range(len(landmarks)):
 		x, y = landmarks[i]
 		h = int(y)
 		w = int(x)
-		cv2.circle(annotated, tuple(landmarks[i]), 5, (0,0,255),-1)
+		cv2.circle(annotated, tuple(landmarks[i]), 5, (0,0,255), -1)
+	cv2.line(annotated, p1, p2, (255,0,0), 2)
 
 	cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 	if cv2.waitKey(1) & 0xFF == ord('q'):
