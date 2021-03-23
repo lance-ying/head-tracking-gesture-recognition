@@ -118,7 +118,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 				img = (img - m[:,None,None]) / s[:,None,None]
 				for i in range(len(img)):
 					img[i], landmarks[i] = random_translate(img[i], landmarks[i], translation_pixel_padding=translation_pixel_padding, roll_overwrite_zero=roll_overwrite_zero)
-				img = img.unsqueeze(1)
+				img = torch.tensor(img).unsqueeze(1)
 				label = label.view(label.size(0),-1)
 
 				if using_gpu:
