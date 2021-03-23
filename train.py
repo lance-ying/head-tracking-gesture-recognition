@@ -57,20 +57,20 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 		model.train()
 		for step in (tqdm(range(1,len(train_loader)+1)) if use_loading_bar else range(1,len(train_loader)+1)):
 			img, label = next(iter(train_loader))
-			np_img = img.numpy().astype(np.float32)/255
+			img = img.numpy().astype(np.float32)/255
 			landmarks = label.numpy()
-			m = np.mean(np_img, axis=(1,2))
-			s = np.std(np_img, axis=(1,2))
-			img = (np_img - m[:,None,None]) / s[:,None,None]
+			m = np.mean(img, axis=(1,2))
+			s = np.std(img, axis=(1,2))
+			img = (img - m[:,None,None]) / s[:,None,None]
 			for i in range(len(img)):
 				fig, ax = plt.subplots()
 				ax.imshow(img[i], cmap="gray")
-				ax.scatter(landmarks[i][0::2], landmarks[i][1::2])
+				ax.scatter(landmarks[i][:,0], landmarks[i][:,1])
 				plt.show()
-				minx = int(np.floor(np.min(landmarks[i,0::2])))
-				miny = int(np.ceil(np.min(landmarks[i,1::2])))
-				maxx = int(np.floor(np.max(landmarks[i,0::2])))
-				maxy = int(np.ceil(np.max(landmarks[i,1::2])))
+				minx = int(np.floor(np.min(landmarks[i,:,0])))
+				miny = int(np.ceil(np.min(landmarks[i,:,1])))
+				maxx = int(np.floor(np.max(landmarks[i,:,0])))
+				maxy = int(np.ceil(np.max(landmarks[i,:,1])))
 				lx = -minx + translation_pixel_padding
 				ly = -miny + translation_pixel_padding
 				hx = img[i].shape[1] - maxx - translation_pixel_padding
@@ -82,16 +82,16 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 					if dx > 0:
 						img[i,:,0:dx] = 0
 					if dx < 0:
-						img[i,:,-dx:] = 0
+						img[i,:,dx:] = 0
 					if dy > 0:
 						img[i,0:dy,:] = 0
 					if dy < 0:
-						img[i,-dy:,:] = 0
-				landmarks[i,0::2] += dx
-				landmarks[i,1::2] += dy
+						img[i,dy:,:] = 0
+				landmarks[i,:,0] += dx
+				landmarks[i,:,1] += dy
 				fig, ax = plt.subplots()
 				ax.imshow(img[i], cmap="gray")
-				ax.scatter(landmarks[i][0::2], landmarks[i][1::2])
+				ax.scatter(landmarks[i][:,0], landmarks[i][:,1])
 				plt.show()
 				exit(0)
 			img = torch.tensor(img).unsqueeze(1)
