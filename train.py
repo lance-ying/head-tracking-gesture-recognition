@@ -63,10 +63,6 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 			s = np.std(img, axis=(1,2))
 			img = (img - m[:,None,None]) / s[:,None,None]
 			for i in range(len(img)):
-				fig, ax = plt.subplots()
-				ax.imshow(img[i], cmap="gray")
-				ax.scatter(landmarks[i][:,0], landmarks[i][:,1])
-				plt.show()
 				minx = int(np.floor(np.min(landmarks[i,:,0])))
 				miny = int(np.ceil(np.min(landmarks[i,:,1])))
 				maxx = int(np.floor(np.max(landmarks[i,:,0])))
@@ -89,11 +85,6 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 						img[i,dy:,:] = 0
 				landmarks[i,:,0] += dx
 				landmarks[i,:,1] += dy
-				fig, ax = plt.subplots()
-				ax.imshow(img[i], cmap="gray")
-				ax.scatter(landmarks[i][:,0], landmarks[i][:,1])
-				plt.show()
-				exit(0)
 			img = torch.tensor(img).unsqueeze(1)
 			label = torch.tensor(landmarks)
 			label = label.view(label.size(0),-1)
