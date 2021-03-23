@@ -115,7 +115,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 				img = img.numpy().astype(np.float32)/255
 				m = np.mean(img, axis=(1,2))
 				s = np.std(img, axis=(1,2))
-				img = torch.tensor((img - m[:,None,None]) / s[:,None,None])
+				img = (img - m[:,None,None]) / s[:,None,None]
 				for i in range(len(img)):
 					img[i], landmarks[i] = random_translate(img[i], landmarks[i], translation_pixel_padding=translation_pixel_padding, roll_overwrite_zero=roll_overwrite_zero)
 				img = img.unsqueeze(1)
