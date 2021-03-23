@@ -63,6 +63,10 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 			s = np.std(np_img, axis=(1,2))
 			img = (np_img - m[:,None,None]) / s[:,None,None]
 			for i in range(len(img)):
+				fig, ax = plt.subplots()
+				ax.imshow(img[i], cmap="gray")
+				ax.scatter(landmarks[i][0::2], landmarks[i][1::2])
+				plt.show()
 				minx = int(np.floor(np.min(landmarks[i,0::2])))
 				miny = int(np.ceil(np.min(landmarks[i,1::2])))
 				maxx = int(np.floor(np.max(landmarks[i,0::2])))
