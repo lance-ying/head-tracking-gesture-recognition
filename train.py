@@ -112,10 +112,12 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 		with torch.no_grad():
 			for step in range(1, len(val_loader)+1):
 				img, label = next(iter(val_loader))
-				np_img = img.numpy().astype(np.float32)/255
-				m = np.mean(np_img, axis=(1,2))
-				s = np.std(np_img, axis=(1,2))
-				img = torch.tensor((np_img - m[:,None,None]) / s[:,None,None])
+				img = img.numpy().astype(np.float32)/255
+				m = np.mean(img, axis=(1,2))
+				s = np.std(img, axis=(1,2))
+				img = torch.tensor((img - m[:,None,None]) / s[:,None,None])
+				for i in range(len(img)):
+					img[i], landmarks[i] = random_translate(img[i], landmarks[i], translation_pixel_padding=translation_pixel_padding, roll_overwrite_zero=roll_overwrite_zero)
 				img = img.unsqueeze(1)
 				label = label.view(label.size(0),-1)
 
