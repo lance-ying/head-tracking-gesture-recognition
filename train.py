@@ -17,7 +17,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import dataset
 from network import Net
 
-def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, use_loading_bar = True, learning_rate = 0.0001, num_epochs = 5, epoch_print = 1, epoch_save = 5, checkpoint_dir = "checkpoints/"):
+def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, use_loading_bar = True, learning_rate = 0.0001, num_epochs = 5, epoch_print = 1, epoch_save = 5, translation_pixel_padding = 5, roll_overwrite_zero = True, checkpoint_dir = "checkpoints/"):
 	image_fnames, data_fnames = dataset.find_images()
 	images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
 	dataset.augment_flip(images, landmarks_2d, landmarks_3d)
@@ -58,10 +58,39 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 		for step in (tqdm(range(1,len(train_loader)+1)) if use_loading_bar else range(1,len(train_loader)+1)):
 			img, label = next(iter(train_loader))
 			np_img = img.numpy().astype(np.float32)/255
+			landmarks = label.numpy()
 			m = np.mean(np_img, axis=(1,2))
 			s = np.std(np_img, axis=(1,2))
-			img = torch.tensor((np_img - m[:,None,None]) / s[:,None,None])
-			img = img.unsqueeze(1)
+			img = (np_img - m[:,None,None]) / s[:,None,None]
+			for i in range(len(img)):
+				minx = int(np.floor(np.min(landmarks[i,0::2])))
+				miny = int(np.ceil(np.min(landmarks[i,1::2])))
+				maxx = int(np.floor(np.max(landmarks[i,0::2])))
+				maxy = int(np.ceil(np.max(landmarks[i,1::2])))
+				lx = -minx + translation_pixel_padding
+				ly = -miny + translation_pixel_padding
+				hx = img[i].shape[1] - maxx - translation_pixel_padding
+				hy = img[i].shape[0] - maxy - translation_pixel_padding
+				dx = np.random.randint(lx, hx) if lx < hx else 0
+				dy = np.random.randint(ly, hy) if ly < hy else 0
+				img[i] = np.roll(img[i], (dy,dx), axis=(0,1))
+				if roll_overwrite_zero:
+					if dx > 0:
+						img[i,:,0:dx] = 0
+					if dx < 0:
+						img[i,:,-dx:] = 0
+					if dy > 0:
+						img[i,0:dy,:] = 0
+					if dy < 0:
+						img[i,-dy:,:] = 0
+				landmarks[i,0::2] += dx
+				landmarks[i,1::2] += dy
+				fig, ax = plt.subplots()
+				ax.imshow(img[i], cmap="gray")
+				ax.scatter(landmarks[i][0::2], landmarks[i][1::2])
+				plt.show()
+			img = torch.tensor(img).unsqueeze(1)
+			label = torch.tensor(landmarks)
 			label = label.view(label.size(0),-1)
 
 			optimizer.zero_grad()
