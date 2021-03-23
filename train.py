@@ -17,6 +17,31 @@ from torch.utils.data import DataLoader, TensorDataset
 import dataset
 from network import Net
 
+def random_translate(image, landmarks, translation_pixel_padding = 5, roll_overwrite_zero = True):
+	minx = int(np.floor(np.min(landmarks[:,0])))
+	miny = int(np.ceil(np.min(landmarks[:,1])))
+	maxx = int(np.floor(np.max(landmarks[:,0])))
+	maxy = int(np.ceil(np.max(landmarks[:,1])))
+	lx = -minx + translation_pixel_padding
+	ly = -miny + translation_pixel_padding
+	hx = image.shape[1] - maxx - translation_pixel_padding
+	hy = image.shape[0] - maxy - translation_pixel_padding
+	dx = np.random.randint(lx, hx) if lx < hx else 0
+	dy = np.random.randint(ly, hy) if ly < hy else 0
+	image = np.roll(image, (dy,dx), axis=(0,1))
+	if roll_overwrite_zero:
+		if dx > 0:
+			image[:,0:dx] = 0
+		if dx < 0:
+			image[:,dx:] = 0
+		if dy > 0:
+			image[0:dy,:] = 0
+		if dy < 0:
+			image[dy:,:] = 0
+	landmarks[:,0] += dx
+	landmarks[:,1] += dy
+	return image, landmarks
+
 def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, use_loading_bar = True, learning_rate = 0.0001, num_epochs = 5, epoch_print = 1, epoch_save = 5, translation_pixel_padding = 5, roll_overwrite_zero = True, checkpoint_dir = "checkpoints/"):
 	image_fnames, data_fnames = dataset.find_images()
 	images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
@@ -63,28 +88,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 			s = np.std(img, axis=(1,2))
 			img = (img - m[:,None,None]) / s[:,None,None]
 			for i in range(len(img)):
-				minx = int(np.floor(np.min(landmarks[i,:,0])))
-				miny = int(np.ceil(np.min(landmarks[i,:,1])))
-				maxx = int(np.floor(np.max(landmarks[i,:,0])))
-				maxy = int(np.ceil(np.max(landmarks[i,:,1])))
-				lx = -minx + translation_pixel_padding
-				ly = -miny + translation_pixel_padding
-				hx = img[i].shape[1] - maxx - translation_pixel_padding
-				hy = img[i].shape[0] - maxy - translation_pixel_padding
-				dx = np.random.randint(lx, hx) if lx < hx else 0
-				dy = np.random.randint(ly, hy) if ly < hy else 0
-				img[i] = np.roll(img[i], (dy,dx), axis=(0,1))
-				if roll_overwrite_zero:
-					if dx > 0:
-						img[i,:,0:dx] = 0
-					if dx < 0:
-						img[i,:,dx:] = 0
-					if dy > 0:
-						img[i,0:dy,:] = 0
-					if dy < 0:
-						img[i,dy:,:] = 0
-				landmarks[i,:,0] += dx
-				landmarks[i,:,1] += dy
+				img[i], landmarks[i] = random_translate(img[i], landmarks[i], translation_pixel_padding=translation_pixel_padding, roll_overwrite_zero=roll_overwrite_zero)
 			img = torch.tensor(img).unsqueeze(1)
 			label = torch.tensor(landmarks)
 			label = label.view(label.size(0),-1)
