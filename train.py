@@ -93,6 +93,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 				ax.imshow(img[i], cmap="gray")
 				ax.scatter(landmarks[i][0::2], landmarks[i][1::2])
 				plt.show()
+				exit(0)
 			img = torch.tensor(img).unsqueeze(1)
 			label = torch.tensor(landmarks)
 			label = label.view(label.size(0),-1)
