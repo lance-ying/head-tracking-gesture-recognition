@@ -113,6 +113,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 			for step in range(1, len(val_loader)+1):
 				img, label = next(iter(val_loader))
 				img = img.numpy().astype(np.float32)/255
+				landmarks = label.numpy()
 				m = np.mean(img, axis=(1,2))
 				s = np.std(img, axis=(1,2))
 				img = (img - m[:,None,None]) / s[:,None,None]
