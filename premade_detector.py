@@ -17,7 +17,7 @@ class PremadeDetector():
 		self.predictor = dlib.shape_predictor(self.predictor_filepath)
 
 	def get_landmarks(self, img):
-		bounding_boxes = self.detector(img, 1)
+		bounding_boxes = self.detector(img, 0)
 		if len(bounding_boxes) > 0:
 			bounding_box = bounding_boxes[0] # Only use the first detection
 			shape = self.predictor(img, bounding_box)
