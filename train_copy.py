@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from torch.autograd import Variable
-import dataset
+import face_dataset
 from sklearn.model_selection import train_test_split
 import torch.optim as optim
 from tqdm import tqdm
@@ -82,9 +82,9 @@ class Net(nn.Module):
 
 def main():
     print("loading data")
-    image_fnames, data_fnames = dataset.find_images()
-    images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=False)
-    dataset.augment_flip(images, landmarks_2d, landmarks_3d)
+    image_fnames, data_fnames = face_dataset.find_images()
+    images, landmarks_2d, landmarks_3d = face_dataset.load_data(image_fnames, data_fnames, use_loading_bar=False)
+    face_dataset.augment_flip(images, landmarks_2d, landmarks_3d)
     images = np.array(images)
     landmarks_2d = np.array(landmarks_2d)
     landmarks_3d = np.array(landmarks_3d)

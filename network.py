@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch
 import os
 from torch.autograd import Variable
-import dataset
+import face_dataset
 from sklearn.model_selection import train_test_split
 import torch.optim as optim
 from tqdm import tqdm

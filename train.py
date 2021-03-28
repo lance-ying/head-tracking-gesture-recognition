@@ -14,7 +14,7 @@ import time
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
 
-import dataset
+import face_dataset
 from network import Net
 
 def random_translate(image, landmarks, translation_pixel_padding = 5, roll_overwrite_zero = True):
@@ -43,9 +43,9 @@ def random_translate(image, landmarks, translation_pixel_padding = 5, roll_overw
 	return image, landmarks
 
 def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, use_loading_bar = True, learning_rate = 0.0001, num_epochs = 5, epoch_print = 1, epoch_save = 5, translation_pixel_padding = 5, roll_overwrite_zero = True, checkpoint_dir = "checkpoints/"):
-	image_fnames, data_fnames = dataset.find_images()
-	images, landmarks_2d, landmarks_3d = dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
-	dataset.augment_flip(images, landmarks_2d, landmarks_3d)
+	image_fnames, data_fnames = face_dataset.find_images()
+	images, landmarks_2d, landmarks_3d = face_dataset.load_data(image_fnames, data_fnames, use_loading_bar=use_loading_bar)
+	face_dataset.augment_flip(images, landmarks_2d, landmarks_3d)
 	images = np.array(images)
 	landmarks_2d = np.array(landmarks_2d)
 	landmarks_3d = np.array(landmarks_3d)
