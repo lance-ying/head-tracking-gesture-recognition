@@ -18,12 +18,15 @@ class PremadeDetector():
 
 	def get_landmarks(self, img):
 		bounding_boxes = self.detector(img, 1)
-		bounding_box = bounding_boxes[0] # Only use the first detection
-		shape = self.predictor(img, bounding_box)
-		return self._shape_to_np(shape)
+		if len(bounding_boxes) > 0:
+			bounding_box = bounding_boxes[0] # Only use the first detection
+			shape = self.predictor(img, bounding_box)
+			return self._shape_to_np(shape), True
+		else:
+			return None, False
 
-	def _shape_to_np(self, shape):
-		coords = np.zeros((68, 2))
+	def _shape_to_np(self, shape, dtype=int):
+		coords = np.zeros((68, 2), dtype=dtype)
 		for i in range(0, 68):
 			coords[i] = (shape.part(i).x, shape.part(i).y)
 		return coords
