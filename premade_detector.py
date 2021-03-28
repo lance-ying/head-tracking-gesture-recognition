@@ -22,7 +22,7 @@ class PremadeDetector():
 		shape = self.predictor(img, bounding_box)
 		return self._shape_to_np(shape)
 
-	def _shape_to_np(shape):
+	def _shape_to_np(self, shape):
 		coords = np.zeros((68, 2))
 		for i in range(0, 68):
 			coords[i] = (shape.part(i).x, shape.part(i).y)
