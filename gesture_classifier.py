@@ -32,7 +32,7 @@ class KNNGestureClassifier():
 
 	def predict(self, seq):
 		test_sim = np.array([self.metric(series_to_time_series(np.array(seq)), series_to_time_series(np.array(train_seq)), self.delta, self.eps) for train_seq in self.all_seqs])
-		print(test_sim)
+		# print(test_sim)
 		test_ker = np.reciprocal(1 + test_sim)
 		return self.clf.predict([test_ker])
 
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 	delta = 15
 	eps = 10
 	n_neighbors = 5
-	clf = SVMGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors)
+	clf = KNNGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors)
 
 	import cv2
 	from img import image_to_orientation
@@ -74,7 +74,13 @@ if __name__ == "__main__":
 
 		cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 		if len(seq) >= seq_len:
-			print(clf.predict(seq))
+			out = clf.predict(seq)
+			if out == 0:
+				print("Yes")
+			if out == 1:
+				print("No")
+			if out == 2:
+				print("(No gesture.)")
 			seq = []
 		if cv2.waitKey(1) & 0xFF == ord('q'):
 			break
