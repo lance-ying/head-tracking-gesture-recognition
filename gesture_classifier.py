@@ -32,6 +32,7 @@ class SVMGestureClassifier():
 
 	def predict(self, seq):
 		test_sim = np.array([self.metric(series_to_time_series(np.array(seq)), series_to_time_series(np.array(train_seq)), self.delta, self.eps) for train_seq in self.all_seqs])
+		print(test_sim)
 		test_ker = np.reciprocal(1 + test_sim)
 		return self.clf.predict([test_ker])
 
@@ -41,7 +42,7 @@ if __name__ == "__main__":
 	other_fname = "data/gestures/other_seqs.pkl"
 	metric = M3
 	delta = 15
-	eps = 5
+	eps = 10
 	clf = SVMGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps)
 
 	import cv2
