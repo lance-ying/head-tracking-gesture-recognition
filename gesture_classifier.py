@@ -1,12 +1,12 @@
 import numpy as np
 import pickle
-from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 
 from time_series_similarity import M1, M2, M3, series_to_time_series
 
-class SVMGestureClassifier():
-	def __init__(self, yes_fname, no_fname, other_fname, metric, delta, eps):
+class KNNGestureClassifier():
+	def __init__(self, yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors):
 		self.metric = metric
 		self.delta = delta
 		self.eps = eps
@@ -28,7 +28,7 @@ class SVMGestureClassifier():
 		kernel_mat = np.reciprocal(1 + similarity_mat)
 		plt.imshow(kernel_mat)
 		plt.show()
-		self.clf = SVC(kernel="precomputed").fit(kernel_mat, labels)
+		self.clf = KNeighborsClassifier(metric="precomputed", weights="distance", n_neighbors=n_neighbors).fit(kernel_mat, labels)
 
 	def predict(self, seq):
 		test_sim = np.array([self.metric(series_to_time_series(np.array(seq)), series_to_time_series(np.array(train_seq)), self.delta, self.eps) for train_seq in self.all_seqs])
@@ -43,7 +43,8 @@ if __name__ == "__main__":
 	metric = M3
 	delta = 15
 	eps = 10
-	clf = SVMGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps)
+	n_neighbors = 5
+	clf = SVMGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors)
 
 	import cv2
 	from img import image_to_orientation
