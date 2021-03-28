@@ -12,17 +12,21 @@ cap = cv2.VideoCapture(0)
 print("Press q to quit.")
 print("Press y to start recording a yes sequence, and then press y again to stop.")
 print("Press n to start recording a no sequence, and then press n again to stop.")
+print("Press o to start recording an other sequence, and then press o again to stop.")
 
 detector = PremadeDetector("shape_predictor_68_face_landmarks.dat")
 
 yes_seqs = []
 no_seqs = []
+other_seqs = []
 current_seq = []
 recording_yes = False
 recording_no = False
+recording_other = False
 
 yes_seqs_fname = "data/gestures/yes_seqs.pkl"
 no_seqs_fname = "data/gestures/no_seqs.pkl"
+other_seqs_fname = "data/gestures/other_seqs.pkl"
 
 while(True):
 	# Grab a frame
@@ -50,7 +54,7 @@ while(True):
 	key = cv2.waitKey(1) & 0xFF
 	if key == ord("q"):
 		break
-	elif key == ord("y") and not recording_no:
+	elif key == ord("y") and not recording_no and not recording_other:
 		if recording_yes:
 			print("Finished recording a yes sequence.")
 			recording_yes = False
@@ -61,7 +65,7 @@ while(True):
 		else:
 			print("Recording a yes sequence.")
 			recording_yes = True
-	elif key == ord("n") and not recording_yes:
+	elif key == ord("n") and not recording_yes and not recording_other:
 		if recording_no:
 			print("Finished recording a no sequence.")
 			recording_no = False
@@ -72,6 +76,17 @@ while(True):
 		else:
 			print("Recording a no sequence.")
 			recording_no = True
+	elif key == ord("o") and not recording_yes and not recording_no:
+		if recording_other:
+			print("Finished recording an other sequence.")
+			recording_other = False
+			other_seqs.append(current_seq)
+			# plt.plot(np.array(current_seq)[:,0], np.array(current_seq)[:,1])
+			# plt.show()
+			current_seq = []
+		else:
+			print("Recording an other sequence.")
+			recording_other = True
 
 
 # When everything done, release the capture
@@ -82,3 +97,5 @@ with open(yes_seqs_fname, "wb") as f:
 	pickle.dump(yes_seqs, f)
 with open(no_seqs_fname, "wb") as f:
 	pickle.dump(no_seqs, f)
+with open(other_seqs_fname, "wb") as f:
+	pickle.dump(other_seqs, f)
