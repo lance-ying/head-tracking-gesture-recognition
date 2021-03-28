@@ -1,7 +1,7 @@
 import numpy as np
 
 def series_to_time_series(s):
-	t_vec = np.arange(len(s)):
+	t_vec = np.arange(len(s))
 	out = []
 	for i in range(len(s)):
 		out.append([t_vec[i], s[i]])
