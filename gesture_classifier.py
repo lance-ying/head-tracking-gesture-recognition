@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 from sklearn.svm import SVC
+import matplotlib.pyplot as plt
 
 from time_series_similarity import M1, M2, M3, series_to_time_series
 
@@ -11,8 +12,10 @@ class SVMGestureClassifier():
 		self.eps = eps
 		with open(yes_fname, "rb") as f:
 			yes_seqs = pickle.load(f)
+			yes_seqs.pop(3)
 		with open(no_fname, "rb") as f:
 			no_seqs = pickle.load(f)
+			no_seqs.pop(-1)
 		with open(other_fname, "rb") as f:
 			other_seqs = pickle.load(f)
 		self.all_seqs = yes_seqs + no_seqs + other_seqs
@@ -23,6 +26,8 @@ class SVMGestureClassifier():
 		# 0 is yes, 1 is no, 2 is null/no gesture/other
 		similarity_mat = np.array([[self.metric(series_to_time_series(np.array(seq1)), series_to_time_series(np.array(seq2)), self.delta, self.eps) for seq2 in self.all_seqs] for seq1 in self.all_seqs])
 		kernel_mat = np.reciprocal(1 + similarity_mat)
+		plt.imshow(kernel_mat)
+		plt.show()
 		self.clf = SVC(kernel="precomputed").fit(kernel_mat, labels)
 
 	def predict(self, seq):
@@ -35,7 +40,7 @@ if __name__ == "__main__":
 	no_fname = "data/gestures/no_seqs.pkl"
 	other_fname = "data/gestures/other_seqs.pkl"
 	metric = M3
-	delta = 10
+	delta = 15
 	eps = 5
 	clf = SVMGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps)
 
@@ -44,7 +49,7 @@ if __name__ == "__main__":
 	from premade_detector import PremadeDetector
 	detector = PremadeDetector("shape_predictor_68_face_landmarks.dat")
 	cap = cv2.VideoCapture(0)
-	seq_len = 20
+	seq_len = 40
 	seq = []
 
 	while True:
