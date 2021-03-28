@@ -26,8 +26,8 @@ class KNNGestureClassifier():
 		# 0 is yes, 1 is no, 2 is null/no gesture/other
 		similarity_mat = np.array([[self.metric(series_to_time_series(np.array(seq1)), series_to_time_series(np.array(seq2)), self.delta, self.eps) for seq2 in self.all_seqs] for seq1 in self.all_seqs])
 		kernel_mat = np.reciprocal(1 + similarity_mat)
-		plt.imshow(kernel_mat)
-		plt.show()
+		# plt.imshow(kernel_mat)
+		# plt.show()
 		self.clf = KNeighborsClassifier(metric="precomputed", weights="distance", n_neighbors=n_neighbors).fit(kernel_mat, labels)
 
 	def predict(self, seq):
@@ -41,8 +41,8 @@ if __name__ == "__main__":
 	no_fname = "data/gestures/no_seqs.pkl"
 	other_fname = "data/gestures/other_seqs.pkl"
 	metric = M3
-	delta = 15
-	eps = 10
+	delta = 10
+	eps = 5
 	n_neighbors = 5
 	clf = KNNGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors)
 
