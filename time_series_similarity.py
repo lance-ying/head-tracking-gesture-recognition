@@ -1,5 +1,12 @@
 import numpy as np
 
+def series_to_time_series(s):
+	t_vec = np.arange(len(s)):
+	out = []
+	for i in range(len(s)):
+		out.append([t_vec[i], s[i]])
+	return out
+
 def M1(A, B, delta, eps):
 	l1 = len(A)
 	l2 = len(B)
