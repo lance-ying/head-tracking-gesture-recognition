@@ -45,7 +45,7 @@ while(True):
 			w = int(x)
 			cv2.circle(annotated, tuple(landmarks[i]), 5, (0,0,255), -1)
 		cv2.line(annotated, p1, p2, (255,0,0), 2)
-		if recording_yes or recording_no:
+		if recording_yes or recording_no or recording_other:
 			dx = p2[0]-p1[0]
 			dy = p2[1]-p1[1]
 			current_seq.append([dx, dy])
