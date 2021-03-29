@@ -12,6 +12,18 @@ import matplotlib.pyplot as plt
 from torchvision import models
 import time
 
+class Network(nn.Module):
+    def __init__(self,num_classes=136):
+        super().__init__()
+        self.model_name='resnet18'
+        self.model=models.resnet18(pretrained=True)
+        self.model.conv1=nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.model.fc=nn.Linear(self.model.fc.in_features, num_classes)
+        
+    def forward(self, x):
+        x=self.model(x)
+        return x
+
 class Net(nn.Module):
 	def __init__(self):
 		super(Net, self).__init__()
@@ -69,10 +81,10 @@ class Net(nn.Module):
 		return h
 
 def load_from_checkpoint(fname):
-	dic = torch.load(fname)
+	dic = torch.load(fname,map_location="cpu")
 	model = Net()
 	model.load_state_dict(dic)
-	return model
+	return model.cpu()
 
 def torchify_image(image):
 	try:

@@ -56,7 +56,7 @@ def main(batch_size = 64, use_gpu = False, train_size = 0.8, test_size = 0.2, us
 	train_loader=DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 	val_loader=DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)
 
-	model = Net()
+	model = Network()
 	criterion = nn.MSELoss()
 
 	if use_gpu and torch.cuda.is_available():
