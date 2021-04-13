@@ -36,6 +36,50 @@ class KNNGestureClassifier():
 		test_ker = np.reciprocal(1 + test_sim)
 		return self.clf.predict([test_ker])
 
+def classify_from_webcam(clf):
+	import cv2
+	from img import image_to_orientation
+	from premade_detector import PremadeDetector
+	detector = PremadeDetector("shape_predictor_68_face_landmarks.dat")
+	cap = cv2.VideoCapture(0)
+	seq_len = 40
+	seq = []
+
+	while True:
+		ret, frame = cap.read()
+		frame = np.flip(frame, axis=1)
+		landmarks, success = detector(frame)
+
+		annotated = np.array(frame)
+		if success:
+			p1, p2 = image_to_orientation(landmarks.astype(float))
+			for i in range(len(landmarks)):
+				x, y = landmarks[i]
+				h = int(y)
+				w = int(x)
+				cv2.circle(annotated, tuple(landmarks[i]), 5, (0,0,255), -1)
+			cv2.line(annotated, p1, p2, (255,0,0), 2)
+			dx = p2[0]-p1[0]
+			dy = p2[1]-p1[1]
+			seq.append([dx, dy])
+
+		# cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
+		if len(seq) >= seq_len:
+			out = clf.predict(seq)
+			if out == 0:
+				# print("Yes")
+				cap.release()
+				return "Yes"
+			if out == 1:
+				# print("No")
+				cap.release()
+				return "No"
+			if out == 2:
+				# print("(No gesture.)")
+				cap.release()
+				return None
+			seq = []
+
 if __name__ == "__main__":
 	yes_fname = "data/gestures/yes_seqs.pkl"
 	no_fname = "data/gestures/no_seqs.pkl"
@@ -72,7 +116,7 @@ if __name__ == "__main__":
 			dy = p2[1]-p1[1]
 			seq.append([dx, dy])
 
-		cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
+		# cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 		if len(seq) >= seq_len:
 			out = clf.predict(seq)
 			if out == 0:
@@ -87,4 +131,4 @@ if __name__ == "__main__":
 
 	# When everything done, release the capture
 	cap.release()
-	cv2.destroyAllWindows()
+	# cv2.destroyAllWindows()
