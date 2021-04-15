@@ -12,10 +12,8 @@ class KNNGestureClassifier():
 		self.eps = eps
 		with open(yes_fname, "rb") as f:
 			yes_seqs = pickle.load(f)
-			yes_seqs.pop(3)
 		with open(no_fname, "rb") as f:
 			no_seqs = pickle.load(f)
-			no_seqs.pop(-1)
 		with open(other_fname, "rb") as f:
 			other_seqs = pickle.load(f)
 		self.all_seqs = yes_seqs + no_seqs + other_seqs
@@ -26,8 +24,8 @@ class KNNGestureClassifier():
 		# 0 is yes, 1 is no, 2 is null/no gesture/other
 		similarity_mat = np.array([[self.metric(series_to_time_series(np.array(seq1)), series_to_time_series(np.array(seq2)), self.delta, self.eps) for seq2 in self.all_seqs] for seq1 in self.all_seqs])
 		kernel_mat = np.reciprocal(1 + similarity_mat)
-		# plt.imshow(kernel_mat)
-		# plt.show()
+		plt.imshow(kernel_mat)
+		plt.show()
 		self.clf = KNeighborsClassifier(metric="precomputed", weights="distance", n_neighbors=n_neighbors).fit(kernel_mat, labels)
 
 	def predict(self, seq):
@@ -84,11 +82,15 @@ if __name__ == "__main__":
 	yes_fname = "data/gestures/yes_seqs.pkl"
 	no_fname = "data/gestures/no_seqs.pkl"
 	other_fname = "data/gestures/other_seqs.pkl"
-	metric = M3
-	delta = 10
-	eps = 5
-	n_neighbors = 5
-	clf = KNNGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors)
+	# metric = M3
+	delta = 5
+	eps = 25
+	n_neighbors = 9
+	clf1 = KNNGestureClassifier(yes_fname, no_fname, other_fname, M1, delta, eps, n_neighbors)
+	# clf2 = KNNGestureClassifier(yes_fname, no_fname, other_fname, M2, delta, eps, n_neighbors)
+	# clf3 = KNNGestureClassifier(yes_fname, no_fname, other_fname, M3, delta, eps, n_neighbors)
+
+	clf = clf1
 
 	import cv2
 	from img import image_to_orientation
@@ -116,7 +118,7 @@ if __name__ == "__main__":
 			dy = p2[1]-p1[1]
 			seq.append([dx, dy])
 
-		# cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
+		cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 		if len(seq) >= seq_len:
 			out = clf.predict(seq)
 			if out == 0:
@@ -131,4 +133,4 @@ if __name__ == "__main__":
 
 	# When everything done, release the capture
 	cap.release()
-	# cv2.destroyAllWindows()
+	cv2.destroyAllWindows()
