@@ -16,6 +16,14 @@ class KNNGestureClassifier():
 			no_seqs = pickle.load(f)
 		with open(other_fname, "rb") as f:
 			other_seqs = pickle.load(f)
+		# plt.plot(np.array(yes_seqs[0])[:,0], np.array(yes_seqs[0])[:,1], label="Yes")
+		# plt.plot(np.array(no_seqs[0])[:,0], np.array(no_seqs[0])[:,1], label="No")
+		# plt.plot(np.array(other_seqs[0])[:,0], np.array(other_seqs[0])[:,1], label="(No gesture)")
+		# plt.legend()
+		# plt.xlabel("Horizontal Position")
+		# plt.ylabel("Vertical Position")
+		# plt.title("Head Position Tracks for Sample Gestures")
+		# plt.show()
 		self.all_seqs = yes_seqs + no_seqs + other_seqs
 		labels = np.zeros(len(self.all_seqs))
 		labels[:len(yes_seqs)] = 0
