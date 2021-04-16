@@ -10,11 +10,15 @@ if __name__ == '__main__':
     yes_fname = "data/gestures/yes_seqs.pkl"
     no_fname = "data/gestures/no_seqs.pkl"
     other_fname = "data/gestures/other_seqs.pkl"
-    metric = M3
-    delta = 10
-    eps = 5
-    n_neighbors = 5
-    clf = KNNGestureClassifier(yes_fname, no_fname, other_fname, metric, delta, eps, n_neighbors)
+    # metric = M3
+    delta = 5
+    eps = 25
+    n_neighbors = 9
+    # clf1 = KNNGestureClassifier(yes_fname, no_fname, other_fname, M1, delta, eps, n_neighbors)
+    clf2 = KNNGestureClassifier(yes_fname, no_fname, other_fname, M2, delta, eps, n_neighbors)
+    # clf3 = KNNGestureClassifier(yes_fname, no_fname, other_fname, M3, delta, eps, n_neighbors)
+
+    clf = clf2
     
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Gesture Classifier")
