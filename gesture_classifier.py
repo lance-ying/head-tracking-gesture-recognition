@@ -69,7 +69,7 @@ def classify_from_webcam(clf):
 			dy = p2[1]-p1[1]
 			seq.append([dx, dy])
 
-		# cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
+		cv2.imshow('frame',cv2.resize(annotated, (800, 800)))
 		if len(seq) >= seq_len:
 			out = clf.predict(seq)
 			if out == 0:
@@ -85,6 +85,8 @@ def classify_from_webcam(clf):
 				cap.release()
 				return None
 			seq = []
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
 
 if __name__ == "__main__":
 	yes_fname = "data/gestures/yes_seqs.pkl"

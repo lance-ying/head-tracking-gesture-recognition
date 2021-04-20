@@ -30,7 +30,7 @@ if __name__ == '__main__':
     s=classify_from_webcam(clf)
     w.setText(s)
     app.processEvents()
-    for i in range(3):
+    while True:
         app.processEvents()
         s=classify_from_webcam(clf)
         w.setText(s)
