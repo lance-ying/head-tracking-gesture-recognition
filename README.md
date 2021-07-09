@@ -4,7 +4,7 @@ We propose a novel system that allows users to interact with computational syste
 
 
 
-![Alt text](pipeline.png?raw=true)
+![Alt text](pipeline.jpg?raw=true)
 
 
 Please see video introduction of our model: https://youtu.be/jn0zbFaeiWE
